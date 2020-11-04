@@ -147,6 +147,47 @@ public:
    */
   ACTION addsponsor(eosio::name account, string sponsor_name, string covid_impact, string benefit_description,
                     string website, string telephone, string bussines_type, string schedule, string email, eosio::asset community_asset, string location);
+
+    /**
+   *
+   *  Saves the info related with a sponsor's offer within a community
+   *
+   * @param sponsor - The user sponsor name,
+   * @param cost  - The cost of the offer 
+   * @param description - TODO: add remainig parameters to match atttributes for offer.
+   */
+
+  ACTION addoffer(eosio::name sponsor, uint8_t cost, string description);
+
+  /**
+   *
+   *  Removes the info related with a sponsor's offer within a community
+   *
+   * @param ID - The offer ID
+   */
+
+  ACTION rmoffer(uint64_t id);
+
+   /**
+   *
+   *  Activate offers by lifebanks for a community
+   *
+   * @param ID - The offer ID
+   * @param community - The community symbol name
+   */
+
+  ACTION activeoffer(uint64_t offer_id);
+
+   /**
+   *
+   *  Inactivate offers approved by lifebanks for a community
+   *
+   * @param ID - The offer ID
+   * @param community - The community symbol name
+   */
+
+  ACTION disableoffer(uint64_t offer_id);
+  
   /**
    *
    *  Clear all data in all constact's tables
@@ -311,6 +352,35 @@ private:
 };
 
 constexpr eosio::name consent_account{"consent2life"_n};
+
+  /*
+  *  Table to store data realted with offers registered by sponsors
+  */
+  TABLE offers
+  {
+    uint64_t id;
+    eosio::name sponsor;
+    uint8_t cost;
+    checksum256 tx;
+    auto primary_key() const { return id; }
+    EOSLIB_SERIALIZE(offers,
+                    (sponsor)(cost)(tx));
+  };
+  typedef multi_index<name("offers"), offers> offers_table;
+
+  /*
+  *  Table to store data realted with offers approved by communites
+  */
+  TABLE active_offers
+  {
+    uint64_t id;
+    uint64_t offer_id;
+    eosio::symbol community;
+    auto primary_key() const { return id; }
+    EOSLIB_SERIALIZE(active_offers,
+                    (id)(offer_id)(community));
+  };
+  typedef multi_index<name("activeoffers"), active_offers> active_offers_table;
 
 /*
 *

@@ -114,9 +114,21 @@ ACTION lifebankcode::adddonor(name account, eosio::asset community_asset)
   }
 }
 
-ACTION lifebankcode::addlifebank(eosio::name account, string lifebank_name,
-                                 string description, string address, string location, string phone_number,
-                                 bool has_immunity_test, uint8_t blood_urgency_level, string schedule, eosio::asset community_asset, string email)
+ACTION lifebankcode::addlifebank(
+    eosio::name account,
+    string lifebank_name,
+    string about,
+    string address,
+    string location,
+    string telephones,
+    bool has_immunity_test,
+    uint8_t blood_urgency_level,
+    string schedule,
+    eosio::asset community_asset,
+    string email,
+    string photos,
+    string logo_url,
+    string social_media_links)
 {
   require_auth(get_self());
   eosio::check(is_account(account), "New user account does not exists");
@@ -150,9 +162,21 @@ ACTION lifebankcode::addlifebank(eosio::name account, string lifebank_name,
   }
 }
 
-ACTION lifebankcode::uplifebank(eosio::name account, string lifebank_name,
-                                string description, string address, string location, string phone_number,
-                                bool has_immunity_test, uint8_t blood_urgency_level, string schedule, eosio::asset community_asset, string email)
+ACTION lifebankcode::uplifebank(
+    eosio::name account,
+    string lifebank_name,
+    string about,
+    string address,
+    string location,
+    string telephones,
+    bool has_immunity_test,
+    uint8_t blood_urgency_level,
+    string schedule,
+    eosio::asset community_asset,
+    string email,
+    string photos,
+    string logo_url,
+    string social_media_links)
 {
   require_auth(account);
   check_consent(account);
@@ -170,8 +194,23 @@ ACTION lifebankcode::uplifebank(eosio::name account, string lifebank_name,
   }
 }
 
-ACTION lifebankcode::addsponsor(eosio::name account, string sponsor_name, string covid_impact, string benefit_description,
-                                string website, string telephone, string bussines_type, string schedule, string email, eosio::asset community_asset, string location)
+ACTION lifebankcode::addsponsor(
+    eosio::name account,
+    string sponsor_name,
+    string covid_impact,
+    string benefit_description,
+    string website,
+    string telephones,
+    string business_type,
+    string schedule,
+    string email,
+    eosio::asset community_asset,
+    string location,
+    string address,
+    string logo_url,
+    string about,
+    string social_media_links,
+    string photos)
 {
   require_auth(account);
   check_consent(account);
@@ -202,6 +241,24 @@ ACTION lifebankcode::addsponsor(eosio::name account, string sponsor_name, string
     });
   }
 }
+
+ACTION lifebankcode::addoffer(
+    eosio::name sponsor,
+    uint8_t cost)
+  {
+    require_auth(sponsor);
+    check_consent(sponsor);
+
+    eosio::check(is_donor(sponsor), "Account must be a sponsor");
+    eosio::check(is_lifebank(sponsor), "Account must be a sponsor");
+
+    offers_table _offers(get_self(), get_self().value);
+
+    _offers.emplace(get_self(), [&](auto &row) {
+      row.sponsor = sponsor;
+      row.cost = cost; 
+    });
+  }
 
 ACTION lifebankcode::unsubscribe(name user, eosio::asset community_asset)
 {
